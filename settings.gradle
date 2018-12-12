@@ -1,0 +1,5 @@
+rootProject.name = 'grpc-micrometer-root'
+
+include 'grpc-micrometer'
+include 'example-protobuf'
+include 'example-spring-boot'

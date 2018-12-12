@@ -1,0 +1,65 @@
+apply plugin: 'java-library'
+apply plugin: 'com.google.protobuf'
+
+dependencies {
+    // grpc
+    api 'io.grpc:grpc-protobuf'
+    api 'io.grpc:grpc-netty'
+    api 'io.grpc:grpc-stub'
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.5.1-1"
+    }
+
+    generatedFilesBaseDir = "${projectDir}/src"
+
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+
+    generateProtoTasks {
+        ofSourceSet('main').each { task ->
+            task.builtins {
+                java {
+                    outputSubDir = 'gen-java'
+                }
+            }
+            task.plugins {
+                grpc {
+                    outputSubDir = 'gen-java'
+                }
+            }
+
+            task.doFirst {
+                delete "$generatedFilesBaseDir/main/gen-java"
+            }
+
+            // this forces :generatedProto to be executed regardless task cache
+            task.outputs.upToDateWhen { false }
+        }
+    }
+}
+
+// for IDEA
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/gen-java' // contains protobuf generated sources
+        }
+    }
+}
+
+idea {
+    module {
+        // specify 'src/main/gen-java' as generated sources for IDEA
+        generatedSourceDirs += file('src/main/gen-java')
+    }
+}
+
+clean {
+    delete "${protobuf.generatedFilesBaseDir}/main/gen-java"
+}

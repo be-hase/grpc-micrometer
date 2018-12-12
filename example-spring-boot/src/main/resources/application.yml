@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      exposure:
+        include:
+        - prometheus
+  metrics:
+    use-global-registry: true
+
+logging:
+  level:
+    com.be_hase: DEBUG

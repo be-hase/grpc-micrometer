@@ -1,0 +1,17 @@
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    // projects
+    implementation project(':example-protobuf')
+    implementation project(':grpc-micrometer')
+
+    // spring
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.github.lognet:grpc-spring-boot-starter'
+
+    // micrometer
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+}
+
+bootJar.enabled = true

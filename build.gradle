@@ -1,0 +1,150 @@
+buildscript {
+    ext {
+        grpcVersion = '1.16.1'
+
+        repos = {
+            mavenCentral()
+            maven { url 'https://plugins.gradle.org/m2/' }
+        }
+    }
+
+    repositories repos
+
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.1.0.RELEASE'
+        classpath 'io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE'
+        classpath 'gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.5.2'
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.7'
+    }
+}
+
+group = 'com.be-hase.grpc-micrometer'
+version = "0.0.1"
+
+// Set build variables based on build type (release, snapshot, development)
+def isDevBuild
+def isReleaseBuild
+def sonatypeRepositoryUrl
+if (hasProperty('release')) {
+    isReleaseBuild = true
+    sonatypeRepositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+} else if (hasProperty('snapshot')) {
+    version += '-SNAPSHOT'
+    sonatypeRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
+} else {
+    isDevBuild = true
+    version += '-SNAPSHOT'
+}
+
+allprojects {
+    group = rootProject.group
+    version = rootProject.version
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: "com.gorylenko.gradle-git-properties"
+
+    repositories repos
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-parameters" << "-Xdiags:verbose"
+    }
+
+    // Basically, we manage by spring platform BOM.
+    dependencyManagement {
+        imports {
+            mavenBom 'org.springframework.boot:spring-boot-dependencies:2.1.1.RELEASE'
+        }
+
+        // except spring platform-bom library versions
+        dependencies {
+            // grpc
+            dependencySet(group: 'io.grpc', version: "${grpcVersion}") {
+                entry 'grpc-netty'
+                entry 'grpc-protobuf'
+                entry 'grpc-stub'
+                entry 'grpc-testing'
+            }
+
+            // for example
+            dependency 'io.github.lognet:grpc-spring-boot-starter:3.0.0'
+        }
+    }
+}
+
+[':grpc-micrometer'].each { projectName ->
+    project(projectName) { project ->
+        apply plugin: 'maven'
+        apply plugin: 'signing'
+
+        task javadocJar(type: Jar) {
+            classifier = 'javadoc'
+            from "${buildDir}/javadoc"
+        }
+
+        task sourcesJar(type: Jar) {
+            classifier = 'sources'
+            from sourceSets.main.allSource
+        }
+
+        artifacts {
+            archives javadocJar, sourcesJar
+        }
+
+        signing {
+            required { isReleaseBuild }
+            sign configurations.archives
+        }
+
+        uploadArchives {
+            repositories {
+                if (isDevBuild) {
+                    mavenLocal()
+                } else {
+                    mavenDeployer {
+                        if (isReleaseBuild) {
+                            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                        }
+
+                        repository(url: sonatypeRepositoryUrl) {
+                            authentication(userName: sonatypeUsername, password: sonatypePassword)
+                        }
+
+                        pom.project {
+                            name project.name
+                            packaging 'jar'
+                            description project.description
+                            url 'https://github.com/be-hase/grpc-micrometer'
+
+                            scm {
+                                url 'scm:git@github.com:be-hase/grpc-micrometer.git'
+                                connection 'scm:git@github.com:be-hase/grpc-micrometer.git'
+                                developerConnection 'scm:git@github.com:be-hase/grpc-micrometer.git'
+                            }
+                            licenses {
+                                license {
+                                    name 'Apache'
+                                    url 'https://opensource.org/licenses/Apache-2.0'
+                                }
+                            }
+                            developers {
+                                developer {
+                                    id 'be-hase'
+                                    name 'Ryosuke Hasebe'
+                                    email 'hsb.1014@gmail.com'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
