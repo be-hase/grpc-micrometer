@@ -9,4 +9,8 @@ dependencies {
     api 'io.micrometer:micrometer-core'
 
     testImplementation project(':example-protobuf')
+    testImplementation 'io.grpc:grpc-testing'
+    testImplementation 'junit:junit'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.assertj:assertj-core'
 }
