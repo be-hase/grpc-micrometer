@@ -73,7 +73,10 @@ subprojects {
                 entry 'grpc-testing'
             }
 
-            // for example
+            // for JDK9 ~
+            dependency 'javax.annotation:javax.annotation-api:1.2'
+
+            // for example app
             dependency 'io.github.lognet:grpc-spring-boot-starter:3.0.0'
         }
     }
