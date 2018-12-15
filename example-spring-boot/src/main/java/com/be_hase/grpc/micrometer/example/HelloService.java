@@ -7,6 +7,7 @@ import com.be_hase.grpc.micrometer.example.hello.HelloRequest;
 import com.be_hase.grpc.micrometer.example.hello.HelloServiceGrpc;
 
 import io.grpc.Status;
+import io.grpc.StatusException;
 import io.grpc.stub.StreamObserver;
 
 @GRpcService
@@ -16,9 +17,10 @@ public class HelloService extends HelloServiceGrpc.HelloServiceImplBase {
     public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
         final String name = request.getName();
         if ("error".equals(name)) {
-            throw Status.INVALID_ARGUMENT
-                    .withDescription("server error")
-                    .asRuntimeException();
+            final StatusException exception = Status.INVALID_ARGUMENT.withDescription("invalid argument")
+                                                                     .asException();
+            responseObserver.onError(exception);
+            return;
         }
 
         final HelloReply reply = HelloReply.newBuilder()
