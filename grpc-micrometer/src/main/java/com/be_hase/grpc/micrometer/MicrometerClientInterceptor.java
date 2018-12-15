@@ -10,7 +10,7 @@ import io.grpc.MethodDescriptor;
 import io.micrometer.core.instrument.MeterRegistry;
 
 public class MicrometerClientInterceptor implements ClientInterceptor {
-    private static final String DEFAULT_METRICS_NAME = "grpc.server";
+    private static final String DEFAULT_METRICS_NAME = "grpc.client";
 
     private final MeterRegistry meterRegistry;
     private final String metricsName;
