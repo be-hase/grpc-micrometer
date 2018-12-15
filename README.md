@@ -1,4 +1,4 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.be-hase.grpc-micrometer/grpc-micrometer/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.be-hase.grpc-micrometer/grpc-micrometer)
+[![Maven Central](https://img.shields.io/maven-central/v/com.be-hase.grpc-micrometer/grpc-micrometer.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.be-hase.grpc-micrometer%22%20AND%20a:%22grpc-micrometer%22)
 [![CircleCI](https://circleci.com/gh/be-hase/grpc-micrometer.svg?style=svg)](https://circleci.com/gh/be-hase/grpc-micrometer)
 
 # grpc-micrometer
@@ -17,6 +17,12 @@ Micrometer instrument for gRPC.
   - Counter of `grpc.client.stream.messages.sent`: Total number of stream messages sent
     
 ## Usage
+
+Add dependency in your app.
+
+- groupId: com.be-hase.grpc-micrometer
+- artifactId: grpc-micrometer
+- version: [![Maven Central](https://img.shields.io/maven-central/v/com.be-hase.grpc-micrometer/grpc-micrometer.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.be-hase.grpc-micrometer%22%20AND%20a:%22grpc-micrometer%22)
 
 ### Server
 
