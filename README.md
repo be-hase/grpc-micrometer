@@ -1,4 +1,5 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.be-hase.output-capture/output-capture/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.be-hase.grpc-micrometer/grpc-micrometer)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.be-hase.grpc-micrometer/grpc-micrometer/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.be-hase.grpc-micrometer/grpc-micrometer)
+[![CircleCI](https://circleci.com/gh/be-hase/grpc-micrometer.svg?style=svg)](https://circleci.com/gh/be-hase/grpc-micrometer)
 
 # grpc-micrometer
 
