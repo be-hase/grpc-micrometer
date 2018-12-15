@@ -1,0 +1,26 @@
+version: 2
+
+_test_body: &test_body
+  working_directory: ~/grpc-micrometer
+
+  steps:
+  - checkout
+  - run: ./gradlew clean check
+
+jobs:
+  test_jdk8:
+    docker:
+    - image: circleci/openjdk:8-jdk
+    <<: *test_body
+
+  test_jdk11:
+    docker:
+    - image: circleci/openjdk:11-jdk
+    <<: *test_body
+
+workflows:
+  version: 2
+  test:
+    jobs:
+    - test_jdk8
+    - test_jdk11
